@@ -48,13 +48,7 @@
 	sudo chown root com.apple.energyprofiler.ntpUpdater.plist
 	```
 
-1. Copy the current absolute path in your clipboard (usefull for the next step)
-
-	```
-	pwd | pbcopy
-	```
-	NOTE: in the following steps the absolute path is referred as ```{LOCAL_ABS_PATH}```
-
+1. NOTE: in the following steps the absolute path is referred as ```{LOCAL_ABS_PATH}```
 		
 1. Modify every ```.plist``` file replacing **every** occurrence of the (entire) string: 
 	
@@ -62,7 +56,7 @@
 	/Users/erotundo/git/OSX-System-Logger/
 	``` 
 	
-	with your local repository absolute path, obtained in previous step.
+	with your local repository absolute path.
 
 1. Create user's launchd symlinks (important: use the absolute path)
 	
