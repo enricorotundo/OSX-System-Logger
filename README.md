@@ -50,13 +50,7 @@
 
 1. NOTE: in the following steps the absolute path is referred as ```{LOCAL_ABS_PATH}```
 		
-1. Modify every ```.plist``` file replacing **every** occurrence of the (entire) string: 
-	
-	```
-	/Users/erotundo/git/OSX-System-Logger/
-	``` 
-	
-	with your local repository absolute path.
+1. Replace **every** occurrence of the string ```/Users/erotundo/git/OSX-System-Logger/``` in **every** ```.plist``` file with your local repository absolute path
 
 1. Create user's launchd symlinks (important: use the absolute path)
 	
