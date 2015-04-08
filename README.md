@@ -27,43 +27,60 @@
 	ioreg -p IOUSB -w0 | sed 's/[^o]*o //; s/@.*$//' | grep -i -v '^Root.*' > usbDevices_config.txt
 	```
 
+1. Change folder
+
+	```
+	cd launchd_config/
+	```
 	
 1. Create launchd plist file from template (it must not be writable by anyone other than the owner)
 	
 	```
-	cp launchd_config/com.apple.energyprofiler.cpuLogger.plist.template launchd_config/com.apple.energyprofiler.cpuLogger.plist
-	cp launchd_config/com.apple.energyprofiler.lastDump.plist.template launchd_config/com.apple.energyprofiler.lastDump.plist
-	cp launchd_config/com.apple.energyprofiler.ntpUpdater.plist.template launchd_config/com.apple.energyprofiler.ntpUpdater.plist
-	cp launchd_config/com.apple.energyprofiler.sysLogger.plist.template launchd_config/com.apple.energyprofiler.sysLogger.plist
+	cp com.apple.energyprofiler.cpuLogger.plist.template com.apple.energyprofiler.cpuLogger.plist
+	cp com.apple.energyprofiler.lastDump.plist.template com.apple.energyprofiler.lastDump.plist
+	cp com.apple.energyprofiler.ntpUpdater.plist.template com.apple.energyprofiler.ntpUpdater.plist
+	cp com.apple.energyprofiler.sysLogger.plist.template com.apple.energyprofiler.sysLogger.plist
 	```
 
-1. Change ```ntpUpdater.plist``` owner:
+1. Change ```ntpUpdater.plist``` owner: 
 
 	```
-	sudo chown root /Users/erotundo/git/OSX-System-Logger/launchd_config/com.apple.energyprofiler.ntpUpdater.plist
+	sudo chown root com.apple.energyprofiler.ntpUpdater.plist
 	```
-
-1. Run this, it will copy the current absolute path in your clipboard (usefull for the next step)
+	
+1. Copy the current absolute path in your clipboard (usefull for the next step)
 
 	```
 	pwd | pbcopy
-	```		
-		
-1. Modify every ```launchd_config/com.apple.energyprofiler.*.plist``` replacing **every** occurrences of the (entire) string ```/Users/erotundo/git/OSX-System-Logger/``` with your local repository absolute path (obtained in previous the step).
+	```
+	NOTE: in the following steps the absolute path is referred as ```{LOCAL_ABS_PATH}```
 
-1. Create launchd symlink
+		
+1. Modify every ```.plist``` file replacing **every** occurrences of the (entire) string: 
 	
 	```
-	ln -s /Users/erotundo/git/OSX-System-Logger/launchd_config/com.apple.energyprofiler.cpuLogger.plist ~/Library/LaunchAgents/com.apple.energyprofiler.cpuLogger.plist
-	ln -s /Users/erotundo/git/OSX-System-Logger/launchd_config/com.apple.energyprofiler.lastDump.plist ~/Library/LaunchAgents/com.apple.energyprofiler.lastDump.plist
-	ln -s /Users/erotundo/git/OSX-System-Logger/launchd_config/com.apple.energyprofiler.sysLogger.plist ~/Library/LaunchAgents/com.apple.energyprofiler.sysLogger.plist
+	/Users/erotundo/git/OSX-System-Logger/
+	``` 
+	
+	with your local repository absolute path, obtained in previous step.
+
+1. Create user's launchd symlinks (important: use the absolute path)
+	
 	```
-1. Sudo
-	```
-	sudo ln -s /Users/erotundo/git/OSX-System-Logger/launchd_config/com.apple.energyprofiler.ntpUpdater.plist /Library/LaunchDaemons/com.apple.energyprofiler.ntpUpdater.plist
+	ln -s {LOCAL_ABS_PATH}/launchd_config/com.apple.energyprofiler.cpuLogger.plist ~/Library/LaunchAgents/com.apple.energyprofiler.cpuLogger.plist
+	ln -s {LOCAL_ABS_PATH}/launchd_config/com.apple.energyprofiler.lastDump.plist ~/Library/LaunchAgents/com.apple.energyprofiler.lastDump.plist
+	ln -s {LOCAL_ABS_PATH}/launchd_config/com.apple.energyprofiler.sysLogger.plist ~/Library/LaunchAgents/com.apple.energyprofiler.sysLogger.plist
 	```
 
-1. Logout and login back
+1. Create root's launchd symlinks (important: use the absolute path)
+
+	```
+	sudo ln -s {LOCAL_ABS_PATH}/launchd_config/com.apple.energyprofiler.ntpUpdater.plist /Library/LaunchDaemons/com.apple.energyprofiler.ntpUpdater.plist
+	```
+
+1. **LOGOUT**
+
+1. Login *(this script assumes that you use always the same system user)*
 	
 1. To Check if scripts are working, run the following commands:
 	
@@ -102,7 +119,7 @@
 	
 ### Uninstall
 
-1. 
+1. Remove launchd configurations
 ```
 sudo rm /Library/LaunchDaemons/com.apple.energyprofiler.ntpUpdater.plist
 rm ~/Library/LaunchAgents/com.apple.energyprofiler.*
