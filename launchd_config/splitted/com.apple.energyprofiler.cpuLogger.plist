@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<!-- CPU LOAD LOGGER - CONTINUOUS -->
+<dict>
+    <key>Label</key>
+    <string>com.apple.energyprofiler.cpuLogger</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>python</string>
+        <string>/Users/erotundo/git/OSX-System-Logger/cpuLogger.py</string>
+    </array>
+    <key>WorkingDirectory</key>
+    <string>/Users/erotundo/git/OSX-System-Logger/</string>
+    <key>RunAtLoad</key>
+    <true />
+    <key>LaunchOnlyOnce</key>
+    <true />
+    <key>LowPriorityIO</key>
+    <true />
+</dict>
+</plist>

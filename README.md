@@ -1,18 +1,11 @@
-# OSX-System-Logger
-
-
-
-
+# OSX System Logger
 
 ### Requirements:
 
-* command line tools installed (Xcode)
-* python 2.7 installed 
-* sudo
+* Command line tools installed (xcode)
+* Python 2.7 
+* *sudo* permissions
 
-```
-ioreg -p IOUSB -w0 | sed 's/[^o]*o //; s/@.*$//' | grep -i -v '^Root.*' > usbDevices_config.txt
-```
 
 ### Install (Mac OSX 10.10.2):
 
@@ -21,33 +14,44 @@ ioreg -p IOUSB -w0 | sed 's/[^o]*o //; s/@.*$//' | grep -i -v '^Root.*' > usbDev
 	```
 	git clone https://github.com/tundo91/OSX-System-Logger.git
 	```
+	
+1. Enter the folder:
 
-1. set the NTP server (important):
+	```
+	cd	OSX-System-Logger
+	```
+
+1. Create the configuration file for the USB devices logger
 
 	```
-# 	sudo ntpdate -u ntp1.inrim.it
+	ioreg -p IOUSB -w0 | sed 's/[^o]*o //; s/@.*$//' | grep -i -v '^Root.*' > usbDevices_config.txt
 	```
+
 	
-1. goto macLogger directory
-	
-	```
-	cd Code/macLogger/
-	```
-	
-1. create new launchd plist from template (it must not be writable by anyone other than the owner)
+1. Create launchd plist file from template (it must not be writable by anyone other than the owner)
 	
 	```
-	cp com.apple.energyprofiler.plist.template com.apple.energyprofiler.plist
+	cp launchd_config/com.apple.energyprofiler.cpuLogger.plist.template launchd_config/com.apple.energyprofiler.cpuLogger.plist
+cp launchd_config/com.apple.energyprofiler.lastDump.plist.template launchd_config/com.apple.energyprofiler.lastDump.plist
+cp launchd_config/com.apple.energyprofiler.ntpUpdater.plist.template launchd_config/com.apple.energyprofiler.ntpUpdater.plist
+cp launchd_config/com.apple.energyprofiler.sysLogger.plist.template launchd_config/com.apple.energyprofiler.sysLogger.plist
 	```
+1. Run this, it will copy the absolute path in your clipboard (usefull for the next step)
+
+	```
+	pwd | pbcopy
+	```		
 		
-1. modify the plist file by replacing paths with your local "macLogger" absolute path. The "pwd" command gets the abs path of the current dir.
+1. Modify the new ```launchd_config/com.apple.energyprofiler.plist``` replacing **every** occurences of the (entire) string ```/Users/erotundo/git/OSX-System-Logger/``` with your local repository absolute path (obtained in previous the step).
 
-1. create launchd symlink
+1. Create launchd symlink
 	
 	```
-	ln -s /Users/erotundo/git/energyprofiler/Code/macLogger/com.apple.energyprofiler.plist ~/Library/LaunchAgents/com.apple.energyprofiler.plist
+	ln -s /Users/erotundo/git/OSX-System-Logger/launchd_config/com.apple.energyprofiler.plist ~/Library/LaunchAgents/com.apple.energyprofiler.plist
 	```
-1. to check if the script is working:
+1. Reboot your Mac
+	
+1. Check if scripts are working:
 	
 	```
 	tail -f /Users/erotundo/git/energyprofiler/Code/macLogger/log.txt
@@ -56,8 +60,4 @@ ioreg -p IOUSB -w0 | sed 's/[^o]*o //; s/@.*$//' | grep -i -v '^Root.*' > usbDev
 	
 ### Uninstall
 
-1. Revert original Apple NTP server. 
-
-	```
-	sudo ntpdate -u ntp1.inrim.it
-	```
+TODO
