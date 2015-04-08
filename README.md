@@ -128,4 +128,4 @@ rm ~/Library/LaunchAgents/com.apple.energyprofiler.*
 1. Goto ```System Preferences``` pane, then select ```Date & Time``` and enable ```Set date and time automatically```, choose a preferred Apple NTP server from the dropdown list.
 
 ### For questions refer to:
-Enrico Rotundo <enrico.rotundo@gmail.com>
+Enrico Rotundo - <enrico.rotundo@gmail.com>
