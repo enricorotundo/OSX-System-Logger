@@ -66,7 +66,7 @@
 	sudo ln -s {LOCAL_ABS_PATH}/launchd_config/com.apple.energyprofiler.ntpUpdater.plist /Library/LaunchDaemons/com.apple.energyprofiler.ntpUpdater.plist
 	```
 
-1. **LOGOUT**
+1. **REBOOT THE SYSTEM** (not just Logout!)
 
 1. Login *(this script assumes that you always use the same system user)*
 	
