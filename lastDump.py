@@ -1,0 +1,15 @@
+#!/usr/bin/python
+
+import getpass
+from utils import executeBashCmd
+
+loginCmd = "last" # get login history
+lastLog = "logs/" + getpass.getuser() + "_last.txt"
+
+def lastFileDump():
+	last_file = open(lastLog,"w", 1)
+	last_file.write(executeBashCmd("last"))
+	last_file.close()
+	return
+
+lastFileDump()
