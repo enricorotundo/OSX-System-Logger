@@ -56,7 +56,7 @@
 	NOTE: in the following steps the absolute path is referred as ```{LOCAL_ABS_PATH}```
 
 		
-1. Modify every ```.plist``` file replacing **every** occurrences of the (entire) string: 
+1. Modify every ```.plist``` file replacing **every** occurrence of the (entire) string: 
 	
 	```
 	/Users/erotundo/git/OSX-System-Logger/
