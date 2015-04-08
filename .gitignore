@@ -3,7 +3,7 @@ __pycache__/
 
 logs/*
 
-launchd_config/com.apple.energyprofiler.plist
+launchd_config/com.apple.*.plist
 
 usbDevices_config.txt
 
