@@ -74,14 +74,16 @@
 1. **REBOOT THE SYSTEM** (not just Logout!)
 
 1. Login *(this script assumes that you always use the same system user)*
-	
-1. Check if scripts are actually working, run the following commands:
+
+1. DONE!
+
+1. ... to check if scripts are actually working, run the following:
 	
 	```
 	sudo launchctl list | grep energyprofiler
 	```
 
-	should show something similar to:
+	*should show something similar to:*
 
 	```
 	-	0	com.apple.energyprofiler.ntpUpdater
@@ -93,7 +95,7 @@
 	launchctl list | grep energyprofiler
 	```
 
-	should show something similar to:
+	*should show something similar to:*
 
 	```
 	2475	0	com.apple.energyprofiler.sysLogger
