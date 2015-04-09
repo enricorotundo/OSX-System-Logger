@@ -50,20 +50,27 @@
 
 1. NOTE: in the following steps the absolute path is referred as ```{LOCAL_ABS_PATH}```
 		
-1. Replace **every** occurrence of the string ```/Users/erotundo/git/OSX-System-Logger/``` in **every** ```.plist``` file with your local repository absolute path
+1. In every ```.plist``` file there is the following elements couple:
+
+	```
+	<key>WorkingDirectory</key>
+    <string>/Users/erotundo/git/OSX-System-Logger/</string>
+    ```
+
+	Replace the *string* element content with your local absolute path 
 
 1. Create user's launchd symlinks (important: use the absolute path)
 	
 	```
-	ln -s {LOCAL_ABS_PATH}/launchd_config/com.apple.energyprofiler.cpuLogger.plist ~/Library/LaunchAgents/com.apple.energyprofiler.cpuLogger.plist
-	ln -s {LOCAL_ABS_PATH}/launchd_config/com.apple.energyprofiler.lastDump.plist ~/Library/LaunchAgents/com.apple.energyprofiler.lastDump.plist
-	ln -s {LOCAL_ABS_PATH}/launchd_config/com.apple.energyprofiler.sysLogger.plist ~/Library/LaunchAgents/com.apple.energyprofiler.sysLogger.plist
+	ln -s "$PWD"/launchd_config/com.apple.energyprofiler.cpuLogger.plist ~/Library/LaunchAgents/com.apple.energyprofiler.cpuLogger.plist
+	ln -s "$PWD"/launchd_config/com.apple.energyprofiler.lastDump.plist ~/Library/LaunchAgents/com.apple.energyprofiler.lastDump.plist
+	ln -s "$PWD"/launchd_config/com.apple.energyprofiler.sysLogger.plist ~/Library/LaunchAgents/com.apple.energyprofiler.sysLogger.plist
 	```
 
 1. Create root's launchd symlinks (important: use the absolute path)
 
 	```
-	sudo ln -s {LOCAL_ABS_PATH}/launchd_config/com.apple.energyprofiler.ntpUpdater.plist /Library/LaunchDaemons/com.apple.energyprofiler.ntpUpdater.plist
+	sudo ln -s "$PWD"/launchd_config/com.apple.energyprofiler.ntpUpdater.plist /Library/LaunchDaemons/com.apple.energyprofiler.ntpUpdater.plist
 	```
 
 1. **REBOOT THE SYSTEM** (not just Logout!)
