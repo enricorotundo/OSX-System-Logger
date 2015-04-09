@@ -12,9 +12,9 @@
 	<key>WorkingDirectory</key>
 	<string>/Users/erotundo/git/OSX-System-Logger/</string>
 	<key>StandardOutPath</key>
-    <string>logs/launchd/ntpUpdater_stdOut.log</string>
+    <string>logs/ntpUpdater_stdOut.log</string>
     <key>StandardErrorPath</key>
-    <string>logs/launchd/ntpUpdater_stdErr.log</string>
+    <string>logs/ntpUpdater_stdErr.log</string>
 	<key>LowPriorityIO</key>
 	<true/>
 	<key>RunAtLoad</key>

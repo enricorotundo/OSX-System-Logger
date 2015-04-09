@@ -12,9 +12,9 @@
     <key>WorkingDirectory</key>
     <string>/Users/erotundo/git/OSX-System-Logger/</string>
     <key>StandardOutPath</key>
-    <string>logs/launchd/lastDump_stdOut.log</string>
+    <string>logs/lastDump_stdOut.log</string>
     <key>StandardErrorPath</key>
-    <string>logs/launchd/lastDump_stdErr.log</string>
+    <string>logs/lastDump_stdErr.log</string>
     <key>LowPriorityIO</key>
     <true />
     <key>RunAtLoad</key>

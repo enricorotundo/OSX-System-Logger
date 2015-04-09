@@ -12,9 +12,9 @@
     <key>WorkingDirectory</key>
     <string>/Users/erotundo/git/OSX-System-Logger/</string>
     <key>StandardOutPath</key>
-    <string>logs/launchd/sysLogger_stdOut.log</string>
+    <string>logs/sysLogger_stdOut.log</string>
     <key>StandardErrorPath</key>
-    <string>logs/launchd/sysLogger_stdErr.log</string>
+    <string>logs/sysLogger_stdErr.log</string>
     <key>KeepAlive</key>
     <true/>
     <key>RunAtLoad</key>
