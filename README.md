@@ -57,7 +57,7 @@
 
 	Replace the *string* element content with your local absolute path 
 
-1. Create user's launchd symlinks (important: use the absolute path)
+1. Create user's launchd symlinks
 	
 	```
 	ln -s "$PWD"/com.apple.energyprofiler.cpuLogger.plist ~/Library/LaunchAgents/com.apple.energyprofiler.cpuLogger.plist
@@ -65,7 +65,7 @@
 	ln -s "$PWD"/com.apple.energyprofiler.sysLogger.plist ~/Library/LaunchAgents/com.apple.energyprofiler.sysLogger.plist
 	```
 
-1. Create root's launchd symlinks (important: use the absolute path)
+1. Create root's launchd symlinks
 
 	```
 	sudo ln -s "$PWD"/com.apple.energyprofiler.ntpUpdater.plist /Library/LaunchDaemons/com.apple.energyprofiler.ntpUpdater.plist
