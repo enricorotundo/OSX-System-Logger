@@ -2,6 +2,8 @@ __pycache__/
 *.py[cod]
 
 logs/*
+!logs/README.txt
+!logs/launchd/README.txt
 
 launchd_config/com.apple.*.plist
 
