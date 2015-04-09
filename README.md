@@ -47,8 +47,6 @@
 	```
 	sudo chown root com.apple.energyprofiler.ntpUpdater.plist
 	```
-
-1. NOTE: in the following steps the absolute path is referred as ```{LOCAL_ABS_PATH}```
 		
 1. In every ```.plist``` file there is the following elements couple:
 
@@ -62,15 +60,15 @@
 1. Create user's launchd symlinks (important: use the absolute path)
 	
 	```
-	ln -s "$PWD"/launchd_config/com.apple.energyprofiler.cpuLogger.plist ~/Library/LaunchAgents/com.apple.energyprofiler.cpuLogger.plist
-	ln -s "$PWD"/launchd_config/com.apple.energyprofiler.lastDump.plist ~/Library/LaunchAgents/com.apple.energyprofiler.lastDump.plist
-	ln -s "$PWD"/launchd_config/com.apple.energyprofiler.sysLogger.plist ~/Library/LaunchAgents/com.apple.energyprofiler.sysLogger.plist
+	ln -s "$PWD"/com.apple.energyprofiler.cpuLogger.plist ~/Library/LaunchAgents/com.apple.energyprofiler.cpuLogger.plist
+	ln -s "$PWD"/com.apple.energyprofiler.lastDump.plist ~/Library/LaunchAgents/com.apple.energyprofiler.lastDump.plist
+	ln -s "$PWD"/com.apple.energyprofiler.sysLogger.plist ~/Library/LaunchAgents/com.apple.energyprofiler.sysLogger.plist
 	```
 
 1. Create root's launchd symlinks (important: use the absolute path)
 
 	```
-	sudo ln -s "$PWD"/launchd_config/com.apple.energyprofiler.ntpUpdater.plist /Library/LaunchDaemons/com.apple.energyprofiler.ntpUpdater.plist
+	sudo ln -s "$PWD"/com.apple.energyprofiler.ntpUpdater.plist /Library/LaunchDaemons/com.apple.energyprofiler.ntpUpdater.plist
 	```
 
 1. **REBOOT THE SYSTEM** (not just Logout!)
