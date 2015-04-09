@@ -108,10 +108,11 @@
 ### Uninstall
 
 1. Remove launchd configurations
-```
-sudo rm /Library/LaunchDaemons/com.apple.energyprofiler.ntpUpdater.plist
-rm ~/Library/LaunchAgents/com.apple.energyprofiler.*
-```
+
+	```
+	sudo mv -v /Library/LaunchDaemons/com.apple.energyprofiler.ntpUpdater.plist ~/.Trash/
+	mv -v ~/Library/LaunchAgents/com.apple.energyprofiler.* ~/.Trash/
+	```
 
 1. Goto ```System Preferences``` pane, then select ```Date & Time``` and enable ```Set date and time automatically```, choose a preferred Apple NTP server from the dropdown list.
 

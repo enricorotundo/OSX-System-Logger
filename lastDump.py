@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import getpass
+import time
 from utils import executeBashCmd
 
 loginCmd = "last" # get login history
@@ -13,3 +14,4 @@ def lastFileDump():
 	return
 
 lastFileDump()
+time.sleep(12)

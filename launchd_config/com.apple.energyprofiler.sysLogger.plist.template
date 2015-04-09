@@ -1,20 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-<!-- SYS LOGGER - CONTINUOUS -->
 <dict>
     <key>Label</key>
     <string>com.apple.energyprofiler.sysLogger</string>
     <key>ProgramArguments</key>
     <array>
     	<string>python</string>
-        <string>/Users/erotundo/git/OSX-System-Logger/sysLogger.py</string>
+        <string>sysLogger.py</string>
     </array>
     <key>WorkingDirectory</key>
     <string>/Users/erotundo/git/OSX-System-Logger/</string>
+    <key>StandardOutPath</key>
+    <string>logs/launchd/sysLogger_stdOut.log</string>
+    <key>StandardErrorPath</key>
+    <string>logs/launchd/sysLogger_stdErr.log</string>
+    <key>KeepAlive</key>
+    <true/>
     <key>RunAtLoad</key>
-    <true />
-    <key>LaunchOnlyOnce</key>
     <true />
     <key>LowPriorityIO</key>
     <true />
