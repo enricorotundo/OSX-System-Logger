@@ -76,8 +76,15 @@ while True:
 		pluggedDevices.update([line])
 	if pluggedDevices != previousDevices:
 		record = time.strftime("%a %b %d %X %Z %Y")
-		for device in pluggedDevices:
-			record = record + "," + device
+		record = record + ",["
+		"#".join(str(device) for device in pluggedDevices)
+		for i, device in enumerate(pluggedDevices):
+			if i > 0:
+				record = record + "#" + device
+			else:
+				record = record + device
+		record = record + "]"
+		print record
 		usb_log_file.write(record + "\n")
 		previousDevices = copy.deepcopy(pluggedDevices)
 	
