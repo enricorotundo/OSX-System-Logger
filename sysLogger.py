@@ -10,7 +10,7 @@ from utils import executeBashCmd, cmdPiped
 delay=1;
 usbLogFile = "logs/" + getpass.getuser() + "_USB_log.csv"
 file = "logs/" + getpass.getuser() + "_log.csv"
-batteryCmd = "./bins/battery -pt" # get battery percentage
+batteryCmd = "./bins/battery -pta" # get battery percentage
 smcCmd = "./bins/smc -l" # get SMC data
 config_path="usbDevices_config.txt"
 
@@ -98,4 +98,8 @@ while True:
 
 
 	# print str((time.time() - start_time)) + "\t" + str(delay - (time.time() - start_time))
-	time.sleep(delay - (time.time() - start_time))
+	delta = delay - (time.time() - start_time)
+	if delta > 0:
+		time.sleep(delta)
+	else:
+		continue
