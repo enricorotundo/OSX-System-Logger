@@ -84,7 +84,6 @@ while True:
 			else:
 				record = record + device
 		record = record + "]"
-		print record
 		usb_log_file.write(record + "\n")
 		previousDevices = copy.deepcopy(pluggedDevices)
 	
