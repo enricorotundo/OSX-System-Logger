@@ -125,5 +125,7 @@
 
 1. Goto ```System Preferences``` pane, then select ```Date & Time``` and enable ```Set date and time automatically```, choose a preferred Apple NTP server from the dropdown list.
 
+1. Reboot
+
 ### For questions refer to:
 Enrico Rotundo - <enrico.rotundo@gmail.com>
