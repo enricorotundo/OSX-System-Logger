@@ -6,3 +6,7 @@ launchd_config/com.apple.*.plist
 
 usbDevices_config.txt
 
+*.tar.gz
+
+remote.txt
+

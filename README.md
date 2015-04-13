@@ -21,7 +21,9 @@
 	cd	OSX-System-Logger
 	```
 
-1. Run (important: before running this, unplug every usb devices connected):
+1. Copy the ```remote.txt``` that you received by email into the repo root
+
+1. Run **(IMPORTANT: before running this, unplug every usb devices connected!)**:
 
 	```
 	ioreg -p IOUSB -w0 | sed 's/[^o]*o //; s/@.*$//' | grep -i -v '^Root.*' > usbDevices_config.txt
