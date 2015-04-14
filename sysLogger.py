@@ -8,8 +8,10 @@ import copy
 import psutil
 import base64
 import csv
+import os
+import datetime
 from utils import executeBashCmd, cmdPiped
-from collections import Counter
+from collections import OrderedDict
 
 def grepBatteryCmd(text):
 	pattern = re.compile('\d{1,3}')
@@ -25,7 +27,7 @@ def smcParser(text):
 
 def getTimeStamp():
 	data = {}
-	data["timestamp"] = time.strftime("%a %b %d %X %Z %Y")
+	data["timestamp"] = datetime.datetime.now().replace(microsecond=0).isoformat() # ISO 8601 Time Representation
 	return data
 
 def getBatteryCharge():
@@ -37,7 +39,7 @@ def getSMCregister(registerName, smcData):
 	if smcData.has_key(registerName):
 		return smcData[registerName][1]
 	else:
-		return "-99999" #i.e. error
+		return "" #i.e. error
 
 def getSMCData():
 	data = {}
@@ -57,60 +59,49 @@ def getUsbPluggedDevs(cmdIOREG, previousDevices):
 	IOREGoutput = cmdPiped(cmdIOREG)
 	pluggedDevices = set()
 	lines = IOREGoutput.splitlines()
-	usbDevices = ""
 	for line in lines:
 		pluggedDevices.update([line])
 	if pluggedDevices != previousDevices:
 		"#".join(str(device) for device in pluggedDevices)
 		previousDevices = copy.deepcopy(pluggedDevices)
 	devicesList = list(pluggedDevices)
-	usbDevices = base64.b64encode(str(devicesList))
-	data["usbDevices"] = usbDevices
+	data["usbDevices"] = base64.b64encode(str(devicesList)) # base64 of a List of Strings, example: ['Storage Media', 'iPhone']
 	return data
 
 def getPsutils():
 	data = {}
 	# CPU
 	data["cpuPercentage"] = psutil.cpu_percent(interval=None)
-
 	# VIRTUAL MEMORY
 	data["memPercentage"] = psutil.virtual_memory().percent
-	data["memAvailable"] = psutil.virtual_memory().available/1024
-	data["memUsed"] = psutil.virtual_memory().used/1024
-	data["memFree"] = psutil.virtual_memory().free/1024
-	
+	data["memAvailable"] = psutil.virtual_memory().available
+	data["memUsed"] = psutil.virtual_memory().used
+	data["memFree"] = psutil.virtual_memory().free
 	# SWAP MEMORY
 	data["memSwapPercentage"] = psutil.swap_memory().percent
-	data["memSwapUsed"] = psutil.swap_memory().used/1024
-	data["memSwapFree"] = psutil.swap_memory().free/1024
-
+	data["memSwapUsed"] = psutil.swap_memory().used
+	data["memSwapFree"] = psutil.swap_memory().free
 	# DISKS COUNTERS
 	data["diskReads"] = psutil.disk_io_counters().read_count
 	data["diskWrite"] = psutil.disk_io_counters().write_count
-	data["diskReadsMBytes"] = psutil.disk_io_counters().read_bytes/1024
-	data["diskWriteMBytes"] = psutil.disk_io_counters().write_bytes/1024
-
+	data["diskReadsBytes"] = psutil.disk_io_counters().read_bytes
+	data["diskWriteBytes"] = psutil.disk_io_counters().write_bytes
 	# NETWORK COUNTERS
-	data["sentMBytes"] = psutil.net_io_counters(pernic=False).bytes_sent/1024
-	data["recvMBytes"] = psutil.net_io_counters(pernic=False).bytes_recv/1024
+	data["sentBytes"] = psutil.net_io_counters(pernic=False).bytes_sent
+	data["recvBytes"] = psutil.net_io_counters(pernic=False).bytes_recv
 	data["sentPackets"] = psutil.net_io_counters(pernic=False).packets_sent
 	data["recvPackets"] = psutil.net_io_counters(pernic=False).packets_recv
-
-	# PROCESSES	(FIRST 10, SORTED BY CPU USAGE)
-	pList = []
+	# PROCESSES
+	processesList = [] # List of Dicts, example: [{'name': 'loginwindow', 'cpu_percent': 0.1}, ...]
 	for proc in psutil.process_iter():
 	    try:
 	        pinfo = proc.as_dict(attrs=['name','cpu_percent'])	        
 	    	if pinfo["cpu_percent"] > 0:
-	    		pList.append(pinfo)
+	    		processesList.append(pinfo)
 	    except psutil.NoSuchProcess:
 	        pass
-	sortedList = sorted(pList, key=lambda k: k['cpu_percent'], reverse=True)[0:10]
-	encoded = ""
-	if len(sortedList) > 0:
-		encoded = base64.b64encode(str(sortedList))
+	data["topProcesses"] = base64.b64encode(str(processesList)) # base64 representation of a List of Dicts
 	
-	data["topProcesses"] = encoded
 	return data
 
 
@@ -121,9 +112,18 @@ def gotoSleep(start_time, delay):
 		time.sleep(delta)
 	return
 
+def writeCSV(data, fieldnames):
+	file = "logs/" + getpass.getuser() + "_log.csv"
+	file_exists = os.path.isfile(file)
+	with open(file,"a", 0) as csvfile:
+		    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+		    if not file_exists:
+        		writer.writeheader()  # file doesn't exist yet, write a header
+		    writer.writerow(data)
+	return
+
 def main():
 	delay=1;
-	file = "logs/" + getpass.getuser() + "_log.csv"
 	config_path="usbDevices_config.txt"
 
 	# GETTING DEFAULT USB DEVICES
@@ -145,9 +145,10 @@ def main():
 	foo = psutil.cpu_percent(interval=None)
 
 	while True:
+		# START LOOP
 		start_time = time.time() # MUST BE FIRST INSTRUCTION
-		data = {}
-
+		
+		data = OrderedDict()
 		# TIMESTAMP
 		data.update(getTimeStamp())
 		# BATTERY [Mac OSX Only]
@@ -158,22 +159,10 @@ def main():
 		data.update(getUsbPluggedDevs(cmdIOREG, previousDevices))
 		# PSUTIL: cpu, ram, io, processes
 		data.update(getPsutils())
-		print data.keys()
-		
-		
-		# # CREATE RECORD
-		# record = time.strftime("%a %b %d %X %Z %Y") + "," + batteryValue + "," + fanSpeed + "," + cpuProximtyTemp +  "," + cpuACore1Temp +  "," + cpuACore2Temp + "," + cpuBCore1Temp +  "," + cpuBCore2Temp + "," + str(memPercentage) + "," + str(memAvailable) + "," + str(memUsed) + "," + str(memFree) + "," + str(cpuPercentage)
-		# # print record
-		# out_file.write(record + "\n")
-
-
-		# with open(file,"a", 0) as csvfile:
-		#     fieldnames = ['timestamp', 'batteryValue']
-		#     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-		#     writer.writeheader()
-		#     writer.writerow(data)
-
-
+		# print data
+	
+		writeCSV(data, data.keys())
+		# END LOOP
 		gotoSleep(start_time, delay) # MUST BE LAST INSTRUCTION
 
 
