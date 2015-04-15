@@ -75,8 +75,11 @@
 	1. 
 		```
 		cd
+		
 		git clone https://github.com/giampaolo/psutil.git
+		
 		cd psutil
+
 		make install
 		```
 
