@@ -21,7 +21,7 @@
 	cd	OSX-System-Logger
 	```
 
-1. Run ```echo PASSWORD >> remote.txt```, ask Enrico which is the password
+1. Run ```echo "PASSWORD" >> remote.txt```, ask Enrico which is the password
 
 1. Run **(IMPORTANT: before running this, unplug every usb devices connected!)**:
 
