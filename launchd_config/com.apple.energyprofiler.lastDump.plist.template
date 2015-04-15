@@ -19,6 +19,11 @@
     <true />
     <key>RunAtLoad</key>
     <true />
+    <key>KeepAlive</key>
+    <dict>
+        <key>NetworkState</key>
+        <true/>
+    </dict>
     <key>StartInterval</key>
     <integer>86400</integer>
 </dict>
