@@ -21,7 +21,7 @@
 	cd	OSX-System-Logger
 	```
 
-1. Copy the ```remote.txt``` that you received by email into the repo root
+1. Run ```echo PASSWORD >> remote.txt```, ask Enrico which is the password
 
 1. Run **(IMPORTANT: before running this, unplug every usb devices connected!)**:
 
@@ -38,7 +38,6 @@
 1. Create launchd plist files from template (they must not be writable by anyone other than the owner!)
 	
 	```
-	cp com.apple.energyprofiler.cpuLogger.plist.template com.apple.energyprofiler.cpuLogger.plist
 	cp com.apple.energyprofiler.lastDump.plist.template com.apple.energyprofiler.lastDump.plist
 	cp com.apple.energyprofiler.ntpUpdater.plist.template com.apple.energyprofiler.ntpUpdater.plist
 	cp com.apple.energyprofiler.sysLogger.plist.template com.apple.energyprofiler.sysLogger.plist
@@ -50,19 +49,18 @@
 	sudo chown root com.apple.energyprofiler.ntpUpdater.plist
 	```
 		
-1. In every ```.plist``` file there is the following elements couple:
+1. In every ```.plist``` file there is the following XML elements couple:
 
 	```
 	<key>WorkingDirectory</key>
     <string>/Users/erotundo/git/OSX-System-Logger/</string>
     ```
 
-	Replace the *string* element content with your local absolute path 
+	Replace the *string* XML element content with your repository absolute path 
 
 1. Create user's launchd symlinks
 	
 	```
-	ln -s "$PWD"/com.apple.energyprofiler.cpuLogger.plist ~/Library/LaunchAgents/com.apple.energyprofiler.cpuLogger.plist
 	ln -s "$PWD"/com.apple.energyprofiler.lastDump.plist ~/Library/LaunchAgents/com.apple.energyprofiler.lastDump.plist
 	ln -s "$PWD"/com.apple.energyprofiler.sysLogger.plist ~/Library/LaunchAgents/com.apple.energyprofiler.sysLogger.plist
 	```
@@ -72,6 +70,15 @@
 	```
 	sudo ln -s "$PWD"/com.apple.energyprofiler.ntpUpdater.plist /Library/LaunchDaemons/com.apple.energyprofiler.ntpUpdater.plist
 	```
+1. Install *psutil* (you may need *gcc*):
+	
+	1. 
+		```
+		cd
+		git clone https://github.com/giampaolo/psutil.git
+		cd psutil
+		make install
+		```
 
 1. **REBOOT THE SYSTEM** (not just Logout!)
 
@@ -101,7 +108,6 @@
 
 	```
 	2475	0	com.apple.energyprofiler.sysLogger
-	2462	0	com.apple.energyprofiler.cpuLogger
 	-		0	com.apple.energyprofiler.lastDump
 	```
 
@@ -127,5 +133,5 @@
 
 1. Reboot
 
-### For questions refer to:
+### For questions ask to:
 Enrico Rotundo - <enrico.rotundo@gmail.com>

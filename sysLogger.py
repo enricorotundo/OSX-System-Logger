@@ -5,11 +5,11 @@ import re
 import time
 import getpass
 import copy
-import psutil
 import base64
 import csv
 import os
 import datetime
+import psutil
 from utils import executeBashCmd, cmdPiped
 from collections import OrderedDict
 
