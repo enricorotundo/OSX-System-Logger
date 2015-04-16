@@ -20,18 +20,18 @@ def grepBatteryCmd(text):
 
 def smcParser(text):
 	lines = text.splitlines();
-	smcData = {}
+	smcData = OrderedDict()
 	for line in lines:
 		smcData[line[2:6].strip()] = [line [8:14][1:-1].strip(), line [16:].split()[0]]
 	return smcData
 
 def getTimeStamp():
-	data = {}
+	data = OrderedDict()
 	data["timestamp"] = datetime.datetime.now().replace(microsecond=0).isoformat() # ISO 8601 Time Representation
 	return data
 
 def getBatteryCharge():
-	data = {}
+	data = OrderedDict()
 	data["batteryValue"] = grepBatteryCmd(executeBashCmd("./bins/battery -pta"))
 	return data
 
@@ -42,7 +42,7 @@ def getSMCregister(registerName, smcData):
 		return "" #i.e. error
 
 def getSMCData():
-	data = {}
+	data = OrderedDict()
 	smcData = smcParser(executeBashCmd("./bins/smc -l"))
 	# SMC registers: https://github.com/jedda/OSX-Monitoring-Tools/blob/master/check_osx_smc/known-registers.md		
 	data["fanSpeed"] = getSMCregister('F0Ac', smcData)
@@ -54,7 +54,7 @@ def getSMCData():
 	return data
 
 def getUsbPluggedDevs(cmdIOREG, previousDevices):
-	data = {}
+	data = OrderedDict()
 	# USB PLUGGED DEVICES (even if not mounted like iPhones) 
 	IOREGoutput = cmdPiped(cmdIOREG)
 	pluggedDevices = set()
@@ -69,7 +69,7 @@ def getUsbPluggedDevs(cmdIOREG, previousDevices):
 	return data
 
 def getPsutils():
-	data = {}
+	data = OrderedDict()
 	# CPU
 	data["cpuPercentage"] = psutil.cpu_percent(interval=None)
 	# VIRTUAL MEMORY
