@@ -6,6 +6,7 @@ from scp import SCPClient
 import paramiko
 import tarfile
 import os
+import sys
 from utils import executeBashCmd
 
 loginCmd = "last" # get login history
@@ -28,19 +29,35 @@ def make_tarfile(output_filename, source_dir):
     with tarfile.open(output_filename, "w:gz") as tar:
         tar.add(source_dir, arcname=os.path.basename(source_dir))
 
-lastFileDump()
+def main():
+    
+    # print "opening ssh tunnel"
+    conf = open("remote.txt","r").readline().replace("\n","")
+    ssh = createSSHClient("vps142403.ovh.net", 22, "energy", conf)
+    scp = SCPClient(ssh.get_transport())
+    # print "ssh tunnel opened"
+    
+    outFile = getpass.getuser() + "_" + time.strftime("%m%d%Y_%H%M") + "_logs.tar.gz"
+    
+    lastFileDump()
 
-outFile = getpass.getuser() + "_" + time.strftime("%m%d%Y_%H%M") + "_logs.tar.gz"
-make_tarfile(outFile, "logs")
-# print "created: " + outFile 
+    make_tarfile(outFile, "logs")
+    # print "created: " + outFile 
 
-# print "opening ssh tunnel"
-conf = open("remote.txt","r").readline().replace("\n","")
-ssh = createSSHClient("vps142403.ovh.net", 22, "energy", conf)
-scp = SCPClient(ssh.get_transport())
-# print "ssh tunnel opened"
+    # print "coping file"
+    scp.put(outFile, outFile)
+    #  print "copy finished"
 
-# print "coping file"
-scp.put(outFile, outFile)
-# print "copy finished"
-time.sleep(12)
+    print >> sys.stderr, time.strftime("%m%d%Y_%H%M") + ' Error occurred'
+    # time.sleep(120) # wait 2 minutes before
+
+    try:
+        os.remove(outFile)
+    except OSError:
+        pass
+
+    time.sleep(12)
+
+
+if __name__ == '__main__':
+    main()

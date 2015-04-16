@@ -32,14 +32,17 @@ def getISODateTime():
 
 def getBatteryCharge():
 	data = OrderedDict()
-	data["batteryValue"] = grepBatteryCmd(executeBashCmd("./bins/battery -pta"))
+	try:
+		data["batteryValue"] = grepBatteryCmd(executeBashCmd("./bins/battery -pta"))
+	except:
+		data["batteryValue"] = -1
 	return data
 
 def getSMCregister(registerName, smcData):
 	if smcData.has_key(registerName):
 		return smcData[registerName][1]
 	else:
-		return "" #i.e. error
+		return 0
 
 def getSMCData():
 	data = OrderedDict()
@@ -70,27 +73,47 @@ def getUsbPluggedDevs(cmdIOREG, previousDevices):
 
 def getPsutils():
 	data = OrderedDict()
-	# CPU
-	data["cpuPercentage"] = psutil.cpu_percent(interval=None)
-	# VIRTUAL MEMORY
-	data["memPercentage"] = psutil.virtual_memory().percent
-	data["memAvailable"] = psutil.virtual_memory().available
-	data["memUsed"] = psutil.virtual_memory().used
-	data["memFree"] = psutil.virtual_memory().free
-	# SWAP MEMORY
-	data["memSwapPercentage"] = psutil.swap_memory().percent
-	data["memSwapUsed"] = psutil.swap_memory().used
-	data["memSwapFree"] = psutil.swap_memory().free
-	# DISKS COUNTERS
-	data["diskReads"] = psutil.disk_io_counters().read_count
-	data["diskWrite"] = psutil.disk_io_counters().write_count
-	data["diskReadsBytes"] = psutil.disk_io_counters().read_bytes
-	data["diskWriteBytes"] = psutil.disk_io_counters().write_bytes
-	# NETWORK COUNTERS
-	data["sentBytes"] = psutil.net_io_counters(pernic=False).bytes_sent
-	data["recvBytes"] = psutil.net_io_counters(pernic=False).bytes_recv
-	data["sentPackets"] = psutil.net_io_counters(pernic=False).packets_sent
-	data["recvPackets"] = psutil.net_io_counters(pernic=False).packets_recv
+	
+	try:
+		# CPU
+		data["cpuPercentage"] = psutil.cpu_percent(interval=None)
+		# VIRTUAL MEMORY
+		data["memPercentage"] = psutil.virtual_memory().percent
+		data["memAvailable"] = psutil.virtual_memory().available
+		data["memUsed"] = psutil.virtual_memory().used
+		data["memFree"] = psutil.virtual_memory().free
+		# SWAP MEMORY
+		data["memSwapPercentage"] = psutil.swap_memory().percent
+		data["memSwapUsed"] = psutil.swap_memory().used
+		data["memSwapFree"] = psutil.swap_memory().free
+		# DISKS COUNTERS
+		data["diskReads"] = psutil.disk_io_counters().read_count
+		data["diskWrite"] = psutil.disk_io_counters().write_count
+		data["diskReadsBytes"] = psutil.disk_io_counters().read_bytes
+		data["diskWriteBytes"] = psutil.disk_io_counters().write_bytes
+		# NETWORK COUNTERS
+		data["sentBytes"] = psutil.net_io_counters(pernic=False).bytes_sent
+		data["recvBytes"] = psutil.net_io_counters(pernic=False).bytes_recv
+		data["sentPackets"] = psutil.net_io_counters(pernic=False).packets_sent
+		data["recvPackets"] = psutil.net_io_counters(pernic=False).packets_recv
+	except:
+		data["cpuPercentage"] = 0
+		data["memPercentage"] = 0
+		data["memAvailable"] = 0
+		data["memUsed"] = 0
+		data["memFree"] = 0
+		data["memSwapPercentage"] = 0
+		data["memSwapUsed"] = 0
+		data["memSwapFree"] = 0
+		data["diskReads"] = 0
+		data["diskWrite"] = 0
+		data["diskReadsBytes"] = 0
+		data["diskWriteBytes"] = 0
+		data["sentBytes"] = 0
+		data["recvBytes"] = 0
+		data["sentPackets"] = 0
+		data["recvPackets"] = 0
+
 	# PROCESSES
 	processesList = [] # List of Dicts, example: [{'name': 'loginwindow', 'cpu_percent': 0.1}, ...]
 	for proc in psutil.process_iter():
@@ -104,9 +127,7 @@ def getPsutils():
 	
 	return data
 
-
 def gotoSleep(start_time, delay):
-	# print str((time.time() - start_time)) + "\t" + str(delay - (time.time() - start_time))
 	delta = delay - (time.time() - start_time)
 	if delta > 0:
 		time.sleep(delta)
@@ -125,6 +146,7 @@ def writeCSV(data, fieldnames):
 def main():
 	delay=1;
 	config_path="usbDevices_config.txt"
+	username = getpass.getuser()
 
 	# GETTING DEFAULT USB DEVICES
 	defaultUSB = set()
@@ -151,6 +173,8 @@ def main():
 		data = OrderedDict()
 		# TIMESTAMP
 		data.update(getISODateTime())
+		# USERNAME
+		data["username"] = username
 		# BATTERY [Mac OSX Only]
 		data.update(getBatteryCharge())
 		# SMC: Fan speed + Temperatures [Mac OSX Only]
@@ -162,8 +186,9 @@ def main():
 		# print data
 		
 		# write only if all data have been collected
-		if len(data) == 26:
+		if len(data) == 27:
 			writeCSV(data, data.keys())
+		
 		# END LOOP
 		gotoSleep(start_time, delay) # MUST BE LAST INSTRUCTION
 

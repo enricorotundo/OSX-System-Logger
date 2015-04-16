@@ -23,8 +23,6 @@
     <dict>
         <key>SuccessfulExit</key>
         <false/>
-        <key>NetworkState</key>
-        <true/>
     </dict>
     <key>StartInterval</key>
     <integer>86400</integer>
