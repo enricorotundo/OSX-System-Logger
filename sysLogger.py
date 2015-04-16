@@ -25,9 +25,9 @@ def smcParser(text):
 		smcData[line[2:6].strip()] = [line [8:14][1:-1].strip(), line [16:].split()[0]]
 	return smcData
 
-def getTimeStamp():
+def getISODateTime():
 	data = OrderedDict()
-	data["timestamp"] = datetime.datetime.now().replace(microsecond=0).isoformat() # ISO 8601 Time Representation
+	data["datetimeISO"] = datetime.datetime.now().replace(microsecond=0).isoformat() # ISO 8601 Time Representation
 	return data
 
 def getBatteryCharge():
@@ -150,7 +150,7 @@ def main():
 		
 		data = OrderedDict()
 		# TIMESTAMP
-		data.update(getTimeStamp())
+		data.update(getISODateTime())
 		# BATTERY [Mac OSX Only]
 		data.update(getBatteryCharge())
 		# SMC: Fan speed + Temperatures [Mac OSX Only]
@@ -160,8 +160,10 @@ def main():
 		# PSUTIL: cpu, ram, io, processes
 		data.update(getPsutils())
 		# print data
-	
-		writeCSV(data, data.keys())
+		
+		# write only if all data have been collected
+		if len(data) == 26:
+			writeCSV(data, data.keys())
 		# END LOOP
 		gotoSleep(start_time, delay) # MUST BE LAST INSTRUCTION
 
