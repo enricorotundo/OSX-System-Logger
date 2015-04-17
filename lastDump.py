@@ -7,16 +7,17 @@ import paramiko
 import tarfile
 import os
 import sys
+import glob
 from utils import executeBashCmd
 
 loginCmd = "last" # get login history
 lastLog = "logs/" + getpass.getuser() + "_last.txt"
 
 def lastFileDump():
-	last_file = open(lastLog,"a", 0)
-	last_file.write(executeBashCmd("last"))
-	last_file.close()
-	return
+    last_file = open(lastLog,"a", 0)
+    last_file.write(executeBashCmd("last"))
+    last_file.close()
+    return
 
 def createSSHClient(server, port, user, password):
     client = paramiko.SSHClient()
@@ -30,33 +31,46 @@ def make_tarfile(output_filename, source_dir):
         tar.add(source_dir, arcname=os.path.basename(source_dir))
 
 def main():
-    
-    # print "opening ssh tunnel"
-    conf = open("remote.txt","r").readline().replace("\n","")
-    ssh = createSSHClient("vps142403.ovh.net", 22, "energy", conf)
-    scp = SCPClient(ssh.get_transport())
-    # print "ssh tunnel opened"
-    
-    outFile = getpass.getuser() + "_" + time.strftime("%m%d%Y_%H%M") + "_logs.tar.gz"
-    
-    lastFileDump()
-
-    make_tarfile(outFile, "logs")
-    # print "created: " + outFile 
-
-    # print "coping file"
-    scp.put(outFile, outFile)
-    #  print "copy finished"
-
-    print >> sys.stderr, time.strftime("%m%d%Y_%H%M") + ' Error occurred'
-    # time.sleep(120) # wait 2 minutes before
 
     try:
-        os.remove(outFile)
-    except OSError:
-        pass
+        conf = open("remote.txt","r").readline().replace("\n","")
+        ssh = createSSHClient("vps142403.ovh.net", 22, "energy", conf)
+        scp = SCPClient(ssh.get_transport())
+        
+        pastCSVfiles = glob.glob("logs/" + getpass.getuser() + "_log_" + "*.csv")
+        # COMPRESS ALL CSV FILES EXCEPT THE ONE OF TODAY
+        for csvFile in pastCSVfiles:
+            if csvFile != ("logs/"+getpass.getuser()+"_log_"+time.strftime("%m%d%Y")+".csv"):
+                outFile = csvFile[:-3] + "tar.gz"
+                try:
+                    make_tarfile(outFile, csvFile)
+                    scp.put(outFile)
+                    
+                    try:
+                        os.remove(csvFile)
+                    except OSError:
+                        print "error removing file"
+                    # ssh.get_transport().is_active()
+                except:
+                    print "error creating or compressing file"
 
-    time.sleep(12)
+        otherFiles = glob.glob("logs/*.txt") + glob.glob("logs/*.log")
+        # COMPRESS TXT AND LOG FILES
+        for file in otherFiles:
+            outFile =  file[:5] + getpass.getuser() + "_" + file[5:-3]  + "tar.gz"
+            try:
+                make_tarfile(outFile, csvFile)
+                scp.put(outFile)
+                try:
+                    os.remove(outFile)
+                except OSError:
+                    print "error removing file"
+            except:
+                print "error creating or compressing file"
+
+        time.sleep(1)
+    except:
+        print "general error"
 
 
 if __name__ == '__main__':
