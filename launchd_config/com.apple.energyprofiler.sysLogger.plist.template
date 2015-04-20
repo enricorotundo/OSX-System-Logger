@@ -19,7 +19,5 @@
     <true/>
     <key>RunAtLoad</key>
     <true />
-    <key>LowPriorityIO</key>
-    <true />
 </dict>
 </plist>

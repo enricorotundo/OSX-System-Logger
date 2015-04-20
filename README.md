@@ -2,7 +2,7 @@
 
 ### Requirements:
 
-* Command line tools installed (xcode)
+* Command line tools installed (*gcc*, xcode)
 * Python 2.7 
 * *sudo* permissions
 

@@ -5,7 +5,6 @@ import re
 import time
 import getpass
 import copy
-import base64
 import csv
 import os
 import datetime
@@ -27,9 +26,11 @@ def smcParser(text):
 
 def getISODateTime():
 	data = OrderedDict()
-	data["datetimeISO"] = ""
+	data["datetime"] = ""
+	data["timeFromEpoch"] = ""
 	try:
-		data["datetimeISO"] = datetime.datetime.now().replace(microsecond=0).isoformat() # ISO 8601 Time Representation
+		data["datetime"] = datetime.datetime.now().replace(microsecond=0).isoformat() # ISO 8601 Time Representation
+		data["timeFromEpoch"] = time.time()
 	except:
 		pass
 	return data
@@ -72,7 +73,7 @@ def getUsbPluggedDevs(cmdIOREG, previousDevices):
 		"#".join(str(device) for device in pluggedDevices)
 		previousDevices = copy.deepcopy(pluggedDevices)
 	devicesList = list(pluggedDevices)
-	data["usbDevices"] = base64.b64encode(str(devicesList)) # base64 of a List of Strings, example: ['Storage Media', 'iPhone']
+	data["usbDevices"] = str(devicesList) # List of Strings, example: ['Storage Media', 'iPhone']
 	return data
 
 def getPsutils():
@@ -80,9 +81,9 @@ def getPsutils():
 	
 	# CPU
 	try:
-		data["cpuPercentage"] = psutil.cpu_percent(interval=None)
+		data["cpuPercentage"] = psutil.cpu_percent(interval=None, percpu=True)
 	except psutil.Error:
-		data["cpuPercentage"] = -1
+		data["cpuPercentage"] = []
 	
 	# VIRTUAL MEMORY
 	try:
@@ -162,7 +163,7 @@ def getPsutils():
 	    		topProcesses.append(pinfo)
 	    except psutil.NoSuchProcess:
 	        pass
-	data["topProcesses"] = base64.b64encode(str(topProcesses)) # base64 representation of a List of Dicts
+	data["topProcesses"] = str(topProcesses) # List of Dicts
 	
 	return data
 
@@ -218,7 +219,7 @@ def main():
 				# TIMESTAMP
 				data.update(getISODateTime())
 
-				if data["datetimeISO"] != "":
+				if data["datetime"] != "":
 					# USERNAME
 					data["username"] = username
 					# BATTERY [Mac OSX Only]
@@ -232,7 +233,7 @@ def main():
 				
 				# WRITE CSV
 				delta = delay - (time.time() - start_time)
-				if len(data) == 27 and delta > 0: # write only if all data have been collected and check if the mac has slept (delta < 0)
+				if len(data) == 28 and delta > 0: # write only if all data have been collected and check if the mac has slept (delta < 0)
 					writeCSV(data, data.keys())
 				else:
 					continue
@@ -244,6 +245,7 @@ def main():
 				else:
 					continue
 				# MUST BE LAST INSTRUCTION	
+			
 			except:
 				time.sleep(1)
 				pass
