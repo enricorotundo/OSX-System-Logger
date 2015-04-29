@@ -9,7 +9,7 @@ import csv
 import os
 import datetime
 import psutil
-from utils import executeBashCmd, cmdPiped
+from utils import executeBashCmd, executeBashCmdNoErr, cmdPiped
 from collections import OrderedDict
 
 def grepBatteryCmd(text):
@@ -41,6 +41,23 @@ def getBatteryCharge():
 		data["batteryValue"] = grepBatteryCmd(executeBashCmd("./bins/battery -pta"))
 	except:
 		data["batteryValue"] = -1
+	return data
+
+def getScreenBrightness():
+	data = OrderedDict()
+	try:
+		text = executeBashCmdNoErr("./bins/screenbrightness -l")
+		text = text.split('\n')[1].split()
+		text = text[len(text) - 1]
+		value = float(text)
+		if float(0) <= float(value) <= float(1):
+			data["screenbrightness"] = float(value)*100
+		else:
+			data["screenbrightness"] = -1
+	except:
+		data["screenbrightness"] = -1
+
+	print data["screenbrightness"]
 	return data
 
 def getSMCregister(registerName, smcData):
@@ -230,10 +247,12 @@ def main():
 					data.update(getUsbPluggedDevs(cmdIOREG, previousDevices))
 					# PSUTIL: cpu, ram, io, processes
 					data.update(getPsutils())
+					# screen Bright
+					data.update(getScreenBrightness())
 				
 				# WRITE CSV
 				delta = delay - (time.time() - start_time)
-				if len(data) == 28 and delta > 0: # write only if all data have been collected and check if the mac has slept (delta < 0)
+				if len(data) == 29 and delta > 0: # write only if all data have been collected and check if the mac has slept (delta < 0)
 					writeCSV(data, data.keys())
 				else:
 					continue
