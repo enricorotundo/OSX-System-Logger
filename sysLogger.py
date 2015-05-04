@@ -11,6 +11,8 @@ import datetime
 import psutil
 from utils import executeBashCmd, executeBashCmdNoErr, cmdPiped
 from collections import OrderedDict
+from sys import platform as _platform
+import subprocess
 
 def grepBatteryCmd(text):
 	pattern = re.compile('\d{1,3}')
@@ -38,7 +40,13 @@ def getISODateTime():
 def getBatteryCharge():
 	data = OrderedDict()
 	try:
-		data["batteryValue"] = grepBatteryCmd(executeBashCmd("./bins/battery -pta"))
+		if osName == 'darwin':
+			# Mac OSX
+			data["batteryValue"] = grepBatteryCmd(executeBashCmd("./bins/battery -pta"))
+		else:
+			# Linux
+			text = executeBashCmd("acpi -b").split()[3].replace('%','')
+			data["batteryValue"] = text
 	except:
 		data["batteryValue"] = -1
 	return data
@@ -46,18 +54,24 @@ def getBatteryCharge():
 def getScreenBrightness():
 	data = OrderedDict()
 	try:
-		text = executeBashCmdNoErr("./bins/screenbrightness -l")
-		text = text.split('\n')[1].split()
-		text = text[len(text) - 1]
-		value = float(text)
-		if float(0) <= float(value) <= float(1):
-			data["screenbrightness"] = float(value)*100
+		if osName == 'darwin':
+			# Mac
+			text = executeBashCmdNoErr("./bins/screenbrightness -l")
+			text = text.split('\n')[1].split()
+			text = text[len(text) - 1]
+			value = float(text)
+			if float(0) <= float(value) <= float(1):
+				data["screenbrightness"] = float(value)*100
+			else:
+				data["screenbrightness"] = -1
 		else:
-			data["screenbrightness"] = -1
+			# Linux
+			text = executeBashCmdNoErr("xbacklight -get")
+			data["screenbrightness"] = float(text)
 	except:
 		data["screenbrightness"] = -1
 
-	print data["screenbrightness"]
+
 	return data
 
 def getSMCregister(registerName, smcData):
@@ -68,29 +82,82 @@ def getSMCregister(registerName, smcData):
 
 def getSMCData():
 	data = OrderedDict()
-	smcData = smcParser(executeBashCmd("./bins/smc -l"))
-	# SMC registers: https://github.com/jedda/OSX-Monitoring-Tools/blob/master/check_osx_smc/known-registers.md		
-	data["fanSpeed"] = getSMCregister('F0Ac', smcData)
-	data["cpuProximtyTemp"] = getSMCregister('TC0P', smcData)
-	data["cpuACore1Temp"] = getSMCregister('TC0C', smcData)
-	data["cpuACore2Temp"] = getSMCregister('TC1C', smcData)
-	data["cpuBCore1Temp"] = getSMCregister('TC2C', smcData)
-	data["cpuBCore2Temp"] = getSMCregister('TC3C', smcData)
+	if osName == 'darwin':
+		# Mac OSX
+		smcData = smcParser(executeBashCmd("./bins/smc -l"))
+		# SMC registers: https://github.com/jedda/OSX-Monitoring-Tools/blob/master/check_osx_smc/known-registers.md		
+		data["fanSpeed"] = getSMCregister('F0Ac', smcData)
+		data["cpuProximtyTemp"] = getSMCregister('TC0P', smcData)
+		data["cpuACore1Temp"] = getSMCregister('TC0C', smcData)
+		data["cpuACore2Temp"] = getSMCregister('TC1C', smcData)
+		data["cpuBCore1Temp"] = getSMCregister('TC2C', smcData)
+		data["cpuBCore2Temp"] = getSMCregister('TC3C', smcData)
+	else:
+		# Linux
+		try:
+			Thermal 0: ok, 54.0 degrees C
+			Thermal 1: ok, 51.0 degrees C
+
+			text = executeBashCmd("acpi -t").splitlines()
+			temps = [-1, -1]
+			for i, line in enumerate(text):
+				temps[i] = line.split()[3]
+			
+			data["fanSpeed"] = -1
+			data["cpuProximtyTemp"] = -1
+			data["cpuACore1Temp"] = temps[0]
+			data["cpuACore2Temp"] = -1
+			data["cpuBCore1Temp"] = temps[1]
+			data["cpuBCore2Temp"] = -1
+		except:
+			data["fanSpeed"] = -1
+			data["cpuProximtyTemp"] = -1
+			data["cpuACore1Temp"] = -1
+			data["cpuACore2Temp"] = -1
+			data["cpuBCore1Temp"] = -1
+			data["cpuBCore2Temp"] = -1
 	return data
+
+
 
 def getUsbPluggedDevs(cmdIOREG, previousDevices):
 	data = OrderedDict()
 	# USB PLUGGED DEVICES (even if not mounted like iPhones) 
-	IOREGoutput = cmdPiped(cmdIOREG)
-	pluggedDevices = set()
-	lines = IOREGoutput.splitlines()
-	for line in lines:
-		pluggedDevices.update([line])
-	if pluggedDevices != previousDevices:
-		"#".join(str(device) for device in pluggedDevices)
-		previousDevices = copy.deepcopy(pluggedDevices)
-	devicesList = list(pluggedDevices)
-	data["usbDevices"] = str(devicesList) # List of Strings, example: ['Storage Media', 'iPhone']
+	if osName == 'darwin':
+		# Mac OSX
+		pluggedDevices = set()
+		IOREGoutput = cmdPiped(cmdIOREG)
+		lines = IOREGoutput.splitlines()
+		for line in lines:
+			pluggedDevices.update([line])
+		if pluggedDevices != previousDevices:
+			"#".join(str(device) for device in pluggedDevices)
+			previousDevices = copy.deepcopy(pluggedDevices)
+		devicesList = list(pluggedDevices)
+		data["usbDevices"] = str(devicesList) # List of Strings, example: ['Storage Media', 'iPhone']
+	else:
+		# Linux
+		device_re = re.compile("Bus\s+(?P<bus>\d+)\s+Device\s+(?P<device>\d+).+ID\s(?P<id>\w+:\w+)\s(?P<tag>.+)$", re.I)
+		df = subprocess.check_output("lsusb", shell=True)
+		devices = []
+		for i in df.split('\n'):
+		    if i:
+		        info = device_re.match(i)
+		        if info:
+		            dinfo = info.groupdict()
+		            dinfo['device'] = '/dev/bus/usb/%s/%s' % (dinfo.pop('bus'), dinfo.pop('device'))
+		            devices.append(dinfo)
+	    list = []
+	    for i in devices:
+	    	list.append(i['tag'])
+	    # devices:
+	    # [
+		# {'device': '/dev/bus/usb/001/009', 'tag': 'Apple, Inc. Optical USB Mouse [Mitsumi]', 'id': '05ac:0304'},
+		# {'device': '/dev/bus/usb/001/001', 'tag': 'Linux Foundation 2.0 root hub', 'id': '1d6b:0002'},
+		# {'device': '/dev/bus/usb/001/002', 'tag': 'Intel Corp. Integrated Rate Matching Hub', 'id': '8087:0020'},
+		# {'device': '/dev/bus/usb/001/004', 'tag': 'Microdia ', 'id': '0c45:641d'}
+		# ]
+		data["usbDevices"] = str(list)
 	return data
 
 def getPsutils():
@@ -197,6 +264,8 @@ def writeCSV(data, fieldnames):
 		pass
 	return
 
+osName = ''
+
 def main():
 	
 	try:
@@ -206,6 +275,17 @@ def main():
 			username = getpass.getuser()
 		except:
 			pass
+
+		# GET OS NAME
+		if _platform == "linux" or _platform == "linux2":
+		    # linux
+		    osName = 'linux'
+		elif _platform == "darwin":
+		    # OS X
+		    osName = 'darwin'
+		elif _platform == "win32":
+		    # Windows...
+		    osName = 'win32'
 
 		# GETTING DEFAULT USB DEVICES
 		config_path="usbDevices_config.txt"
@@ -239,15 +319,15 @@ def main():
 				if data["datetime"] != "":
 					# USERNAME
 					data["username"] = username
-					# BATTERY [Mac OSX Only]
+					# BATTERY [Mac + Linux]
 					data.update(getBatteryCharge())
-					# SMC: Fan speed + Temperatures [Mac OSX Only]
+					# SMC: Fan speed + Temperatures [Mac OSX + Linux]
 					data.update(getSMCData())
-					# USB DEVS [Mac OSX Only]
+					# USB DEVS [Mac OSX + Linux]
 					data.update(getUsbPluggedDevs(cmdIOREG, previousDevices))
 					# PSUTIL: cpu, ram, io, processes
 					data.update(getPsutils())
-					# screen Bright
+					# screen Bright [Mac OSX Only]
 					data.update(getScreenBrightness())
 				
 				# WRITE CSV

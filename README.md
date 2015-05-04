@@ -82,6 +82,12 @@
 
 		make install
 		```
+1. Install *paramiko*
+
+	```
+	sudo easy_install pip
+	pip install paramiko
+	```
 
 1. **REBOOT THE SYSTEM** (not just Logout!)
 
@@ -138,3 +144,10 @@
 
 ### For questions ask to:
 Enrico Rotundo - <enrico.rotundo@gmail.com>
+
+
+# Linux:
+```
+sudo apt-get install acpi
+sudo apt-get install xbacklight
+```
