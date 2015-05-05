@@ -216,10 +216,5 @@ crontab -l
 echo 'python /YOUR_ABSOLUTE_PATH/OSX-System-Logger/sysLogger.py'
 ```
 
-1. make the script executable
-```
-chmod +x sysLogger.py
-```
-
 1. reboot
 

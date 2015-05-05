@@ -120,6 +120,7 @@ def getSMCData():
 def getUsbPluggedDevs(cmdIOREG, previousDevices):
     data = OrderedDict()
     data["usbDevices"] = '[]'
+    print 'ciao'
     # USB PLUGGED DEVICES (even if not mounted like iPhones) 
     if osName == 'darwin':
         # Mac OSX
@@ -327,13 +328,16 @@ def main():
                     data.update(getSMCData())
                     # USB DEVS [Mac OSX + Linux]
                     data.update(getUsbPluggedDevs(cmdIOREG, previousDevices))
+		    print data
                     # PSUTIL: cpu, ram, io, processes
                     data.update(getPsutils())
+                    print data
                     # screen Bright [Mac OSX + Linux]
                     data.update(getScreenBrightness())
-
+		    print data
 		
-	
+		print data                
+		print len(data)
 
                 # WRITE CSV
                 delta = delay - (time.time() - start_time)
