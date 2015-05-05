@@ -150,10 +150,10 @@
 
 ### Install requirements:
 
-```
-sudo apt-get install git python-pip python-dev acpi xbacklight ntp
-sudo pip install psutil paramiko
-```
+	```
+	sudo apt-get install git python-pip python-dev acpi xbacklight ntp
+	sudo pip install psutil paramiko
+	```
 
 ### Steps:
 
@@ -162,59 +162,59 @@ sudo pip install psutil paramiko
 
 1. Open the file ```/etc/ntpd.conf```:
 
-```
-sudo vim /etc/ntpd.conf
-```
+	```
+	sudo vim /etc/ntpd.conf
+	```
 
 1.	and comment (using ```#```) the following:
 
-```
-server 0.debian.pool.ntp.org iburst
-server 1.debian.pool.ntp.org iburst
-server 2.debian.pool.ntp.org iburst
-server 3.debian.pool.ntp.org iburst
-```
+	```
+	server 0.debian.pool.ntp.org iburst
+	server 1.debian.pool.ntp.org iburst
+	server 2.debian.pool.ntp.org iburst
+	server 3.debian.pool.ntp.org iburst
+	```
 
 1.	eventually, comment also the following:
 
-```
-# Use Ubuntu's ntp serer as a fallback.
-server ntp.ubuntu.com
-```
+	```
+	# Use Ubuntu's ntp serer as a fallback.
+	server ntp.ubuntu.com
+	```
 
 1.	then insert the following line:
 
-```
-server ntp1.inrim.it minpoll 10 maxpoll 10
-```
+	```
+	server ntp1.inrim.it minpoll 10 maxpoll 10
+	```
 
 1. Restart the ntp server:
 
-```
-sudo service ntp restart
-``` 
+	```
+	sudo service ntp restart
+	``` 
 
 1. Run in terminal
 
-```
-crontab -e
-```
+	```
+	crontab -e
+	```
 
-1.	select the preferred text editor among those proposed (vim, nano, etc.), then insert the follwing, replacing ```YOUR_ABSOLUTE_PATH``` with your repository path:
+1. Select the preferred text editor among those proposed (vim, nano, etc.), then insert the follwing, replacing ```YOUR_ABSOLUTE_PATH``` with your repository path:
 
-```
-0 12 * * * python /YOUR_ABSOLUTE_PATH/OSX-System-Logger/lastDump.py
-```
+	```
+	0 12 * * * python /YOUR_ABSOLUTE_PATH/OSX-System-Logger/lastDump.py
+	```
 
-1.	save and exit the editor.
+1. Save and exit the editor.
 *note: * syntax errors will be noticed
 Check if the file has been correctly accepted type: ```crontab -l```
 
 1. Make the script executable
 
-```
-chmod +x sysLogger.py
-```
+	```
+	chmod +x sysLogger.py
+	```
 
 1. Set the script to automatically run at login. To do this we'll use the Desktop Environment feature. [Ubuntu](http://askubuntu.com/questions/48321/how-do-i-start-applications-automatically-on-login) | [Mint](http://askubuntu.com/questions/209684/where-can-i-find-the-startup-application-list-in-a-cinnamon-desktop)
 
