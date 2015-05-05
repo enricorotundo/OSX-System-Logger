@@ -144,8 +144,6 @@
 
 1. Reboot
 
-### For questions ask to:
-Enrico Rotundo - <enrico.rotundo@gmail.com>
 
 
 ## Linux (~Ubuntu 14.10):
@@ -189,45 +187,41 @@ server ntp1.inrim.it minpoll 10 maxpoll 10
 ```
 
 1. Restart the ntp server:
+
 ```
 sudo service ntp restart
 ``` 
 
 1. Run in terminal
+
 ```
 crontab -e
 ```
 
-select the preferred text editor, then insert the follwing replacing ```YOUR_ABSOLUTE_PATH``` with your value:
+select the preferred text editor among those proposed (vim, nano, etc.), then insert the follwing, replacing ```YOUR_ABSOLUTE_PATH``` with your repository path:
 
 ```
 0 12 * * * python /YOUR_ABSOLUTE_PATH/OSX-System-Logger/lastDump.py
 ```
 
-save and exit the editor, if no errors occurs no messages will be show.
+save and exit the editor.
+*note: * syntax errors will be noticed
+Check if the file has been correctly accepted type: ```crontab -l```
 
-Check if the file has been correctly accepted:
-```
-crontab -l
-```
 
-1. Open the file ```/etc/rc.local``` (using *sudo vim*) and insert the line (important: use backticks ``` ` ```):
-
-```
-echo `python /YOUR_ABSOLUTE_PATH/OSX-System-Logger/sysLogger.py`
-```
-
-1. make the script executable
+1. Make the script executable
 
 ```
 chmod +x sysLogger.py
 ```
 
-1. Set the script to automatically run at login:
+1. Set the script to automatically run at login. To do this we'll use the Desktop Environment feature. 
+[Ubuntu](http://askubuntu.com/questions/48321/how-do-i-start-applications-automatically-on-login) 
+[Mint](http://askubuntu.com/questions/209684/where-can-i-find-the-startup-application-list-in-a-cinnamon-desktop)
 
-![alt text](http://i.stack.imgur.com/nFb4v.png "Logo Title Text 1")
 
-![alt text](http://i.stack.imgur.com/qsDFC.png "Logo Title Text 1")
+1. Reboot
 
-1. reboot
 
+### For questions ask to:
+Enrico Rotundo - <enrico.rotundo@gmail.com>
