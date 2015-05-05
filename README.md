@@ -211,12 +211,14 @@ Check if the file has been correctly accepted:
 crontab -l
 ```
 
-1. Open the file ```/etc/rc0.d``` and insert the line:
+1. Open the file ```/etc/rc.local``` and insert the line (important: use backticks ``` ` ```):
+
 ```
-echo 'python /YOUR_ABSOLUTE_PATH/OSX-System-Logger/sysLogger.py'
+echo `python /YOUR_ABSOLUTE_PATH/OSX-System-Logger/sysLogger.py`
 ```
 
 1. make the script executable
+
 ```
 chmod +x sysLogger.py
 ```
