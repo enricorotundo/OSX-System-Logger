@@ -1,13 +1,15 @@
 # OSX System Logger
 
+
+## Install (Mac OSX 10.10.2):
+
 ### Requirements:
 
 * Command line tools installed (*gcc*, xcode)
 * Python 2.7 
 * *sudo* permissions
 
-
-### Install (Mac OSX 10.10.2):
+### Steps:
 
 1. Clone the repo:
 
@@ -146,11 +148,73 @@
 Enrico Rotundo - <enrico.rotundo@gmail.com>
 
 
-# Linux:
+## Linux (~Ubuntu 14.10):
+
+### Install requirements:
+
 ```
-sudo apt-get install python-pip
-sudo apt-get install python-dev
-sudo pip install psutil 
-sudo apt-get install acpi
-sudo apt-get install xbacklight
+sudo apt-get install git python-pip python-dev acpi xbacklight ntp
+sudo pip install psutil paramiko
 ```
+
+### Steps:
+
+1. Run ```echo 'PASSWORD' >> remote.txt```, ask Enrico which is the password
+
+
+1. Open the file ```/etc/ntpd.conf```:
+
+```
+sudo vim /etc/ntpd.conf
+```
+
+and comment (using ```#```) the following:
+
+```
+server 0.debian.pool.ntp.org iburst
+server 1.debian.pool.ntp.org iburst
+server 2.debian.pool.ntp.org iburst
+server 3.debian.pool.ntp.org iburst
+```
+
+eventually, comment also the following:
+```
+# Use Ubuntu's ntp serer as a fallback.
+server ntp.ubuntu.com
+```
+
+then insert the following line:
+```
+server ntp1.inrim.it minpoll 10 maxpoll 10
+```
+
+1. Restart the ntp server:
+```
+sudo service ntp restart
+``` 
+
+1. Run in terminal
+```
+crontab -e
+```
+
+select the preferred text editor, then insert the follwing replacing ```YOUR_ABSOLUTE_PATH``` with your value:
+
+```
+0 12 * * * python /YOUR_ABSOLUTE_PATH/OSX-System-Logger/lastDump.py
+```
+
+save and exit the editor, if no errors occurs no messages will be show.
+
+Check if the file has been correctly accepted:
+```
+crontab -l
+```
+
+1. Open the file ```/etc/rc0.d``` and insert the line:
+```
+echo 'python /YOUR_ABSOLUTE_PATH/OSX-System-Logger/sysLogger.py'
+```
+
+1. reboot
+
