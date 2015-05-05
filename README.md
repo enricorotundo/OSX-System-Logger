@@ -166,27 +166,27 @@
 	sudo vim /etc/ntpd.conf
 	```
 
-1.	and comment (using ```#```) the following:
+	1.	and comment (using ```#```) the following:
 
-	```
-	server 0.debian.pool.ntp.org iburst
-	server 1.debian.pool.ntp.org iburst
-	server 2.debian.pool.ntp.org iburst
-	server 3.debian.pool.ntp.org iburst
-	```
+		```
+		server 0.debian.pool.ntp.org iburst
+		server 1.debian.pool.ntp.org iburst
+		server 2.debian.pool.ntp.org iburst
+		server 3.debian.pool.ntp.org iburst
+		```
 
-1.	eventually, comment also the following:
+	1.	eventually, comment also the following:
 
-	```
-	# Use Ubuntu's ntp serer as a fallback.
-	server ntp.ubuntu.com
-	```
+		```
+		# Use Ubuntu's ntp serer as a fallback.
+		server ntp.ubuntu.com
+		```
 
-1.	then insert the following line:
+	1.	then insert the following line:
 
-	```
-	server ntp1.inrim.it minpoll 10 maxpoll 10
-	```
+		```
+		server ntp1.inrim.it minpoll 10 maxpoll 10
+		```
 
 1. Restart the ntp server:
 
