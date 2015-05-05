@@ -95,9 +95,6 @@ def getSMCData():
 	else:
 		# Linux
 		try:
-			Thermal 0: ok, 54.0 degrees C
-			Thermal 1: ok, 51.0 degrees C
-
 			text = executeBashCmd("acpi -t").splitlines()
 			temps = [-1, -1]
 			for i, line in enumerate(text):
@@ -327,7 +324,7 @@ def main():
 					data.update(getUsbPluggedDevs(cmdIOREG, previousDevices))
 					# PSUTIL: cpu, ram, io, processes
 					data.update(getPsutils())
-					# screen Bright [Mac OSX Only]
+					# screen Bright [Mac OSX + Linux]
 					data.update(getScreenBrightness())
 				
 				# WRITE CSV
