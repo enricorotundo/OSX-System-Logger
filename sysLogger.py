@@ -255,8 +255,9 @@ def getPsutils():
 
 def writeCSV(data, fieldnames):
     try:
-        file = "logs/" + getpass.getuser() + "_log_" + time.strftime("%m%d%Y") + ".csv"
-        file_exists = os.path.isfile(file)
+        file = os.path.dirname(os.path.realpath(__file__)) + "/logs/" + getpass.getuser() + "_log_" + time.strftime("%m%d%Y") + ".csv"
+	print file       
+	file_exists = os.path.isfile(file)
         with open(file,"a", 0) as csvfile:
                 writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
                 if not file_exists:
