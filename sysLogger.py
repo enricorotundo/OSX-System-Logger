@@ -284,21 +284,22 @@ def main():
             # Windows...
             osName = 'win32'
 
-        # GETTING DEFAULT USB DEVICES
-        config_path="usbDevices_config.txt"
-        defaultUSB = set()
-        config_file = open(config_path,"r")
-        for line in config_file.readlines():
-            key = line.replace('\n','')
-            if key not in defaultUSB:
-                defaultUSB.add(key)
-        config_file.close()
-        # # CREATING IOREG CMD
-        cmdIOREG="grep -i -v '^Root.*"
-        for value in defaultUSB:
-            cmdIOREG = cmdIOREG + "\|^" + value
-        cmdIOREG = cmdIOREG + "'"
-        previousDevices = set()
+        if osName == 'darwin':
+            # GETTING DEFAULT USB DEVICES
+            config_path="usbDevices_config.txt"
+            defaultUSB = set()
+            config_file = open(config_path,"r")
+            for line in config_file.readlines():
+                key = line.replace('\n','')
+                if key not in defaultUSB:
+                    defaultUSB.add(key)
+            config_file.close()
+            # # CREATING IOREG CMD
+            cmdIOREG="grep -i -v '^Root.*"
+            for value in defaultUSB:
+                cmdIOREG = cmdIOREG + "\|^" + value
+            cmdIOREG = cmdIOREG + "'"
+            previousDevices = set()
 
         # INIT
         foo = psutil.cpu_percent(interval=None)

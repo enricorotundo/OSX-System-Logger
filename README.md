@@ -148,6 +148,9 @@ Enrico Rotundo - <enrico.rotundo@gmail.com>
 
 # Linux:
 ```
+sudo apt-get install python-pip
+sudo apt-get install python-dev
+sudo pip install psutil 
 sudo apt-get install acpi
 sudo apt-get install xbacklight
 ```
