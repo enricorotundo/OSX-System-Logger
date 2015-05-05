@@ -194,21 +194,19 @@
 	sudo service ntp restart
 	``` 
 
-1. Run in terminal
+1. Run:
 
 	```
 	crontab -e
 	```
 
-1. Select the preferred text editor among those proposed (vim, nano, etc.), then insert the follwing, replacing ```YOUR_ABSOLUTE_PATH``` with your repository path:
+	1. Select the preferred text editor among those proposed (vim, nano, etc.), then insert the follwing, replacing ```YOUR_ABSOLUTE_PATH``` with your repository path:
 
-	```
-	0 12 * * * python /YOUR_ABSOLUTE_PATH/OSX-System-Logger/lastDump.py
-	```
+		```
+		0 12 * * * python /YOUR_ABSOLUTE_PATH/OSX-System-Logger/lastDump.py
+		```
 
-1. Save and exit the editor.
-*note: * syntax errors will be noticed
-Check if the file has been correctly accepted type: ```crontab -l```
+	1. Save and exit the editor. *note:* syntax errors will be noticed. Check if the file has been correctly accepted type: ```crontab -l```
 
 1. Make the script executable
 
@@ -216,7 +214,7 @@ Check if the file has been correctly accepted type: ```crontab -l```
 	chmod +x sysLogger.py
 	```
 
-1. Set the script to automatically run at login. To do this we'll use the Desktop Environment feature. [Ubuntu](http://askubuntu.com/questions/48321/how-do-i-start-applications-automatically-on-login) | [Mint](http://askubuntu.com/questions/209684/where-can-i-find-the-startup-application-list-in-a-cinnamon-desktop)
+1. Set the script to automatically run at login. To do so we'll use the Desktop Environment feature. [Ubuntu](http://askubuntu.com/questions/48321/how-do-i-start-applications-automatically-on-login) | [Mint](http://askubuntu.com/questions/209684/where-can-i-find-the-startup-application-list-in-a-cinnamon-desktop)
 
 
 1. Reboot
