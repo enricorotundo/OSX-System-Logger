@@ -211,7 +211,7 @@ Check if the file has been correctly accepted:
 crontab -l
 ```
 
-1. Open the file ```/etc/rc.local``` and insert the line (important: use backticks ``` ` ```):
+1. Open the file ```/etc/rc.local``` (using *sudo vim*) and insert the line (important: use backticks ``` ` ```):
 
 ```
 echo `python /YOUR_ABSOLUTE_PATH/OSX-System-Logger/sysLogger.py`
@@ -222,6 +222,12 @@ echo `python /YOUR_ABSOLUTE_PATH/OSX-System-Logger/sysLogger.py`
 ```
 chmod +x sysLogger.py
 ```
+
+1. Set the script to automatically run at login:
+
+![alt text](http://i.stack.imgur.com/nFb4v.png "Logo Title Text 1")
+
+![alt text](http://i.stack.imgur.com/qsDFC.png "Logo Title Text 1")
 
 1. reboot
 
