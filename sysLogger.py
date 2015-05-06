@@ -37,7 +37,7 @@ def getISODateTime():
         pass
     return data
 
-def getBatteryCharge():
+def getBatteryCharge(osName):
     data = OrderedDict()
     try:
         if osName == 'darwin':
@@ -51,7 +51,7 @@ def getBatteryCharge():
         data["batteryValue"] = -1
     return data
 
-def getScreenBrightness():
+def getScreenBrightness(osName):
     data = OrderedDict()
     try:
         if osName == 'darwin':
@@ -80,7 +80,7 @@ def getSMCregister(registerName, smcData):
     else:
         return -1
 
-def getSMCData():
+def getSMCData(osName):
     data = OrderedDict()
     if osName == 'darwin':
         # Mac OSX
@@ -117,49 +117,51 @@ def getSMCData():
 
 
 
-def getUsbPluggedDevs(cmdIOREG, previousDevices):
+def getUsbPluggedDevs(cmdIOREG, previousDevices, osName):
     data = OrderedDict()
     data["usbDevices"] = '[]'
     # USB PLUGGED DEVICES (even if not mounted like iPhones) 
     if osName == 'darwin':
         # Mac OSX
-        pluggedDevices = set()
-        IOREGoutput = cmdPiped(cmdIOREG)
-        lines = IOREGoutput.splitlines()
-        for line in lines:
-            pluggedDevices.update([line])
-        if pluggedDevices != previousDevices:
-            "#".join(str(device) for device in pluggedDevices)
-            previousDevices = copy.deepcopy(pluggedDevices)
-        devicesList = list(pluggedDevices)
-        data["usbDevices"] = str(devicesList) # List of Strings, example: ['Storage Media', 'iPhone']
+        try:
+            pluggedDevices = set()
+            IOREGoutput = cmdPiped(cmdIOREG)
+            lines = IOREGoutput.splitlines()
+            for line in lines:
+                pluggedDevices.update([line])
+            if pluggedDevices != previousDevices:
+                "#".join(str(device) for device in pluggedDevices)
+                previousDevices = copy.deepcopy(pluggedDevices)
+            devicesList = list(pluggedDevices)
+            data["usbDevices"] = str(devicesList) # List of Strings, example: ['Storage Media', 'iPhone']
+        except Exception as e:
+            data["usbDevices"] = '[]'
     else:
         try:
-		# Linux
-		device_re = re.compile("Bus\s+(?P<bus>\d+)\s+Device\s+(?P<device>\d+).+ID\s(?P<id>\w+:\w+)\s(?P<tag>.+)$", re.I)
-		df = subprocess.check_output("lsusb", shell=True)
-		devices = []
-		for i in df.split('\n'):
-		    if i:
-		        info = device_re.match(i)
-		        if info:
-		            dinfo = info.groupdict()
-		            dinfo['device'] = '/dev/bus/usb/%s/%s' % (dinfo.pop('bus'), dinfo.pop('device'))
-		            devices.append(dinfo)
-		list = []
-		for i in devices:
-		    list.append(i['tag'])
-		# devices:
-		# [
-		# {'device': '/dev/bus/usb/001/009', 'tag': 'Apple, Inc. Optical USB Mouse [Mitsumi]', 'id': '05ac:0304'},
-		# {'device': '/dev/bus/usb/001/001', 'tag': 'Linux Foundation 2.0 root hub', 'id': '1d6b:0002'},
-		# {'device': '/dev/bus/usb/001/002', 'tag': 'Intel Corp. Integrated Rate Matching Hub', 'id': '8087:0020'},
-		# {'device': '/dev/bus/usb/001/004', 'tag': 'Microdia ', 'id': '0c45:641d'}
-		# ]
-		data["usbDevices"] = str(list)
-	except:
-		data["usbDevices"] = '[]'
-		pass
+    		# Linux
+    		device_re = re.compile("Bus\s+(?P<bus>\d+)\s+Device\s+(?P<device>\d+).+ID\s(?P<id>\w+:\w+)\s(?P<tag>.+)$", re.I)
+    		df = subprocess.check_output("lsusb", shell=True)
+    		devices = []
+    		for i in df.split('\n'):
+    		    if i:
+    		        info = device_re.match(i)
+    		        if info:
+    		            dinfo = info.groupdict()
+    		            dinfo['device'] = '/dev/bus/usb/%s/%s' % (dinfo.pop('bus'), dinfo.pop('device'))
+    		            devices.append(dinfo)
+    		listValues = []
+    		for i in devices:
+    		    listValues.append(i['tag'])
+    		# devices:
+    		# [
+    		# {'device': '/dev/bus/usb/001/009', 'tag': 'Apple, Inc. Optical USB Mouse [Mitsumi]', 'id': '05ac:0304'},
+    		# {'device': '/dev/bus/usb/001/001', 'tag': 'Linux Foundation 2.0 root hub', 'id': '1d6b:0002'},
+    		# {'device': '/dev/bus/usb/001/002', 'tag': 'Intel Corp. Integrated Rate Matching Hub', 'id': '8087:0020'},
+    		# {'device': '/dev/bus/usb/001/004', 'tag': 'Microdia ', 'id': '0c45:641d'}
+    		# ]
+    		data["usbDevices"] = str(listValues)
+    	except:
+    		data["usbDevices"] = '[]'
     return data
 
 def getPsutils():
@@ -289,6 +291,7 @@ def main():
         elif _platform == "win32":
             # Windows...
             osName = 'win32'
+
 	cmdIOREG="grep -i -v '^Root.*"
         if osName == 'darwin':
             # GETTING DEFAULT USB DEVICES
@@ -323,17 +326,17 @@ def main():
                     # USERNAME
                     data["username"] = username
                     # BATTERY [Mac + Linux]
-                    data.update(getBatteryCharge())
+                    data.update(getBatteryCharge(osName))
                     # SMC: Fan speed + Temperatures [Mac OSX + Linux]
-                    data.update(getSMCData())
+                    data.update(getSMCData(osName))
                     # USB DEVS [Mac OSX + Linux]
-                    data.update(getUsbPluggedDevs(cmdIOREG, previousDevices))
+                    data.update(getUsbPluggedDevs(cmdIOREG, previousDevices, osName))
+                    print data
                     # PSUTIL: cpu, ram, io, processes
                     data.update(getPsutils())
                     # screen Bright [Mac OSX + Linux]
-                    data.update(getScreenBrightness())
+                    data.update(getScreenBrightness(osName))
 
-		
 	
 
                 # WRITE CSV
