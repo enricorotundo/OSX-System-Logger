@@ -151,7 +151,7 @@
 ### Install requirements:
 
 	```
-	sudo apt-get install git python-pip python-dev acpi xbacklight ntp
+	sudo apt-get install git python-pip python-dev acpi ntp vim
 	sudo pip install psutil paramiko
 	```
 
@@ -208,10 +208,13 @@
 
 	1. Save and exit the editor. *note:* syntax errors will be noticed. Check if the file has been correctly accepted type: ```crontab -l```
 
+1. Goto the repository directory
+
 1. Make the script executable
 
 	```
 	chmod +x sysLogger.py
+	chmod +x lastDump.py
 	```
 
 1. Set the script to automatically run at login. To do so we'll use the Desktop Environment feature. [Ubuntu](http://askubuntu.com/questions/48321/how-do-i-start-applications-automatically-on-login) | [Mint](http://askubuntu.com/questions/209684/where-can-i-find-the-startup-application-list-in-a-cinnamon-desktop)

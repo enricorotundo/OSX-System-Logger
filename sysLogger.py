@@ -66,8 +66,9 @@ def getScreenBrightness(osName):
                 data["screenbrightness"] = -1
         else:
             # Linux
-            text = executeBashCmdNoErr("xbacklight -get")
-            data["screenbrightness"] = float(text)
+            text = executeBashCmdNoErr("cat /sys/class/backlight/acpi_video0/actual_brightness")
+            text1 = executeBashCmdNoErr("cat /sys/class/backlight/acpi_video0/max_brightness")
+            data["screenbrightness"] = 100*float(text)/float(text1)
     except:
         data["screenbrightness"] = -1
 
