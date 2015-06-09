@@ -150,10 +150,10 @@
 
 ### Install requirements:
 
-	```
-	sudo apt-get install git python-pip python-dev acpi ntp vim
-	sudo pip install psutil paramiko
-	```
+```
+sudo apt-get install git python-pip python-dev acpi ntp vim
+sudo pip install psutil paramiko
+```
 
 ### Steps:
 
@@ -197,16 +197,18 @@
 1. Run:
 
 	```
-	crontab -e
+	sudo apt-get install anacron
 	```
 
-	1. Select the preferred text editor among those proposed (vim, nano, etc.), then insert the follwing, replacing ```YOUR_ABSOLUTE_PATH``` with your repository path:
+	1. Open ```/etc/anacrontab```
 
+	2. Insert replacing ```/YOUR_ABSOLUTE_PATH/``` with yours path:
+		
 		```
-		0 12 * * * python /YOUR_ABSOLUTE_PATH/OSX-System-Logger/lastDump.py
+		1 5 cron.daily /YOUR_ABSOLUTE_PATH/OSX-System-Logger/lastDump.py
 		```
-
-	1. Save and exit the editor. *note:* syntax errors will be noticed. Check if the file has been correctly accepted type: ```crontab -l```
+	
+	3. Run ```sudo /etc/init.d/anacron restart``` 
 
 1. Goto the repository directory
 
