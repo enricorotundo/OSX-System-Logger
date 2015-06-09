@@ -219,7 +219,7 @@ sudo pip install psutil paramiko
 	chmod +x lastDump.py
 	```
 
-1. Set the script to automatically run at login. To do so we'll use the Desktop Environment feature. [Ubuntu](http://askubuntu.com/questions/48321/how-do-i-start-applications-automatically-on-login) | [Mint](http://askubuntu.com/questions/209684/where-can-i-find-the-startup-application-list-in-a-cinnamon-desktop)
+1. Set the script to automatically run at login. To do so we'll use the Desktop Environment feature. [Unity + gnome](http://askubuntu.com/questions/48321/how-do-i-start-applications-automatically-on-login) | [Cinnamon](http://askubuntu.com/questions/209684/where-can-i-find-the-startup-application-list-in-a-cinnamon-desktop)
 
 
 1. Reboot
